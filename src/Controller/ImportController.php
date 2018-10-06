@@ -2,6 +2,7 @@
 
 namespace Vinorcola\ImportBundle\Controller;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -9,6 +10,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 use Vinorcola\HelperBundle\Controller;
 use Vinorcola\ImportBundle\Config\Config;
+use Vinorcola\ImportBundle\Event\ImportCompletedEvent;
 use Vinorcola\ImportBundle\Exception\FileNotFoundException;
 use Vinorcola\ImportBundle\Form\ImportType;
 use Vinorcola\ImportBundle\Form\MappingType;
@@ -60,11 +62,12 @@ class ImportController extends Controller
     /**
      * @Route("/mapping", methods={"GET", "POST"}, name="mapping")
      *
-     * @param Session     $session
-     * @param Request     $request
-     * @param string      $importName
-     * @param Config      $config
-     * @param ImportModel $model
+     * @param Session                  $session
+     * @param Request                  $request
+     * @param string                   $importName
+     * @param Config                   $config
+     * @param ImportModel              $model
+     * @param EventDispatcherInterface $eventDispatcher
      * @return Response
      */
     public function mapping(
@@ -72,7 +75,8 @@ class ImportController extends Controller
         Request $request,
         string $importName,
         Config $config,
-        ImportModel $model
+        ImportModel $model,
+        EventDispatcherInterface $eventDispatcher
     ): Response {
 
         set_time_limit(-1);
@@ -104,7 +108,12 @@ class ImportController extends Controller
             unlink($filePath);
             $session->remove(self::SESSION_FILE_PATH);
 
-            return $this->redirectToRoute($config->getRouteNamePrefix($importName) . 'confirm');
+            $event = new ImportCompletedEvent(
+                $this->redirectToRoute($config->getRouteNamePrefix($importName) . 'confirm')
+            );
+            $eventDispatcher->dispatch(ImportCompletedEvent::NAME, $event);
+
+            return $event->getResponse();
         }
 
         return $this->render('@VinorcolaImport/Import/mapping.html.twig', [
