@@ -10,6 +10,11 @@ class ImportCompletedEvent extends Event
     public const NAME = 'import.completed';
 
     /**
+     * @var string
+     */
+    private $importName;
+
+    /**
      * @var Response
      */
     private $response;
@@ -17,11 +22,21 @@ class ImportCompletedEvent extends Event
     /**
      * ImportCompletedEvent constructor.
      *
+     * @param string   $importName
      * @param Response $response
      */
-    public function __construct(Response $response)
+    public function __construct(string $importName, Response $response)
     {
+        $this->importName = $importName;
         $this->response = $response;
+    }
+
+    /**
+     * @return string
+     */
+    public function getImportName(): string
+    {
+        return $this->importName;
     }
 
     /**

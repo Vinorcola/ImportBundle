@@ -109,6 +109,7 @@ class ImportController extends Controller
             $session->remove(self::SESSION_FILE_PATH);
 
             $event = new ImportCompletedEvent(
+                $importName,
                 $this->redirectToRoute($config->getRouteNamePrefix($importName) . 'confirm')
             );
             $eventDispatcher->dispatch(ImportCompletedEvent::NAME, $event);
