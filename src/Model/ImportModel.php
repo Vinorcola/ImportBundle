@@ -107,11 +107,13 @@ class ImportModel
         $consumer = $this->config->getConsumer($importName);
 
         $lineIndex = 0;
+        $consumer->prepare();
         while ($line = $sheet->getNextLine()) {
             $consumer->consume(array_map(function (string $header) use ($line) {
                 return $line[$header];
             }, $mapping), ++$lineIndex);
         }
+        $consumer->finish($lineIndex);
     }
 
     /**
