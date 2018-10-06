@@ -21,6 +21,7 @@ class Configuration implements ConfigurationInterface
                     ->cannotBeEmpty()
                 ->end() // temporaryDirectory
                 ->arrayNode('imports')
+                    ->isRequired()
                     ->requiresAtLeastOneElement()
                     ->normalizeKeys(false)
                     ->useAttributeAsKey('name')
@@ -29,8 +30,14 @@ class Configuration implements ConfigurationInterface
                             ->arrayNode('route_prefix')
                                 ->isRequired()
                                 ->children()
-                                    ->scalarNode('name')->end()
-                                    ->scalarNode('url')->end()
+                                    ->scalarNode('name')
+                                        ->isRequired()
+                                        ->cannotBeEmpty()
+                                    ->end() // name
+                                    ->scalarNode('url')
+                                        ->isRequired()
+                                        ->cannotBeEmpty()
+                                    ->end() // url
                                 ->end()
                             ->end() // route_prefix
                             ->arrayNode('mapping')
