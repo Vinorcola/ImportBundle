@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{{ pageTitle() }}</title>
+        {% block import_stylesheets %}{% endblock %}
+    </head>
+    <body>
+        <h1>{{ pageTitle() }}</h1>
+
+        {% block import_content %}{% endblock %}
+        {% block import_javascripts %}{% endblock %}
+    </body>
+</html>

@@ -1,0 +1,15 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Vinorcola\ImportBundle\:
+        resource: '../../*'
+        exclude: '../../Resources'
+
+    Vinorcola\ImportBundle\Config\Config:
+        $config: []
+
+    Vinorcola\ImportBundle\Routing\RouteLoader:
+        tags: [ routing.loader ]

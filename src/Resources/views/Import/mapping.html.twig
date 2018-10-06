@@ -1,0 +1,102 @@
+{% extends '@VinorcolaImport/layout.html.twig' %}
+
+
+
+{% block import_stylesheets %}
+    {{ parent() }}
+    <style>
+        .excel-viewer {
+            max-height: 600px;
+            width: 100%;
+            background-color: white;
+            overflow: auto;
+        }
+
+        .excel-viewer th {
+            padding: 6px;
+            border: 1px solid #bcbcbc;
+            background-color: #e6e6e6;
+            text-align: center;
+        }
+
+        .excel-viewer td {
+            padding: 6px;
+            border: 1px solid #d4d4d4;
+        }
+    </style>
+{% endblock %}
+
+
+
+{% block import_content %}
+    <div class="row">
+        <div class="col-md-6 col-lg-4">
+            {% if sheetNames|length > 1 %}
+                <div class="form-group">
+                    <label for="select-sheet">{{ 'selectSheet'|tr }}</label>
+                    <select id="select-sheet" class="form-control">
+                        {% for sheetName in sheetNames %}
+                            <option value="{{ loop.index0 }}"{% if currentSheet == loop.index0 %} selected{% endif %}>{{ sheetName }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endif %}
+
+            {{ form_start(form) }}
+                {{ form_widget(form) }}
+                <div class="form-group">
+                    <button class="btn btn-primary">{{ 'submit'|tr }}</button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+
+
+        <div class="col-md-6 col-lg-8">
+            <div class="excel-viewer">
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            {% for header, value in sampleContent|first %}
+                                <th>{{ header }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for line in sampleContent %}
+                            <tr>
+                                <th>{{ loop.index }}</th>
+                                {% for value in line %}
+                                    <td>{{ value }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+
+
+{% block import_javascripts %}
+    {{ parent() }}
+    {% if sheetNames|length > 1 %}
+        <script>
+
+            (function () {
+                var selectInput = document.getElementById("select-sheet");
+                selectInput.addEventListener("change", function (event) {
+                    event.preventDefault();
+                    window.location = window.location.origin + window.location.pathname + "?sheet=" + selectInput.value
+                })
+            })()
+
+        </script>
+    {% endif %}
+{% endblock %}
+
