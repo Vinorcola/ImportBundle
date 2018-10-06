@@ -13,6 +13,8 @@ Setup as many imports as you want by configuring:
 - The process service (which must implement `Vinorcola\ImportBundle\Model\ImportConsumerInterface`).
 
 ```yaml
+# config/packages/vinorcola_import.yaml
+
 vinorcola_import:
     temporaryDirectory: "%kernel.project_dir%/document-storage/tmp"
     imports:
@@ -28,6 +30,14 @@ vinorcola_import:
                 url: /contact/import
             mapping: [ firstName, lastName, emailAddress, phoneNumber ]
             service: App\Model\ContactImportHanlder
+```
+
+```yaml
+# config/routes/vinorcola_import.yaml
+
+import_routes:
+    resource: '@VinorcolaImportBundle/Controller/'
+    type: vinorcola_import
 ```
 
 Then, the `consume` method of your process service will be called for line of data in the user's file, providing an array with the mapped columns and the line index:
