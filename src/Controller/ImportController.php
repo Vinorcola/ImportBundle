@@ -51,7 +51,10 @@ class ImportController extends Controller
             $path = $model->moveFileToApplicationTemporaryDirectory($file);
             $session->set(self::SESSION_FILE_PATH, $path);
 
-            return $this->redirectToRoute($config->getRouteNamePrefix($importName) . 'mapping');
+            return $this->redirectToRoute(
+                $config->getRouteNamePrefix($importName) . 'mapping',
+                $this->extractRouteParameters($request)
+            );
         }
 
         return $this->render('@VinorcolaImport/Import/import.html.twig', [
@@ -82,7 +85,10 @@ class ImportController extends Controller
         set_time_limit(-1);
 
         if (!$session->has(self::SESSION_FILE_PATH)) {
-            return $this->redirectToRoute($config->getRouteNamePrefix($importName) . 'import');
+            return $this->redirectToRoute(
+                $config->getRouteNamePrefix($importName) . 'import',
+                $this->extractRouteParameters($request)
+            );
         }
 
         $filePath = $session->get(self::SESSION_FILE_PATH);
@@ -93,7 +99,10 @@ class ImportController extends Controller
         } catch (FileNotFoundException $exception) {
             $session->remove(self::SESSION_FILE_PATH);
 
-            return $this->redirectToRoute($config->getRouteNamePrefix($importName) . 'import');
+            return $this->redirectToRoute(
+                $config->getRouteNamePrefix($importName) . 'import',
+                $this->extractRouteParameters($request)
+            );
         }
 
         $form = $this->createForm(MappingType::class, null, [
@@ -110,7 +119,10 @@ class ImportController extends Controller
 
             $event = new ImportCompletedEvent(
                 $importName,
-                $this->redirectToRoute($config->getRouteNamePrefix($importName) . 'confirm')
+                $this->redirectToRoute(
+                    $config->getRouteNamePrefix($importName) . 'confirm',
+                    $this->extractRouteParameters($request)
+                )
             );
             $eventDispatcher->dispatch(ImportCompletedEvent::NAME, $event);
 
@@ -133,5 +145,18 @@ class ImportController extends Controller
     public function confirm(): Response
     {
         return $this->render('@VinorcolaImport/Import/confirm.html.twig');
+    }
+
+    /**
+     * Extract all the route parameters from the current route.
+     *
+     * @param Request $request
+     * @return array
+     */
+    private function extractRouteParameters(Request $request): array
+    {
+        return array_filter($request->attributes->get('_route_params'), function ($key): bool {
+            return $key !== 'importName';
+        }, ARRAY_FILTER_USE_KEY);
     }
 }
