@@ -124,7 +124,7 @@ class ImportController extends Controller
                     $this->extractRouteParameters($request)
                 )
             );
-            $eventDispatcher->dispatch(ImportCompletedEvent::NAME, $event);
+            $eventDispatcher->dispatch($event);
 
             return $event->getResponse();
         }

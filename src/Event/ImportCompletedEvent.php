@@ -7,8 +7,6 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ImportCompletedEvent extends Event
 {
-    public const NAME = 'import.completed';
-
     /**
      * @var string
      */
