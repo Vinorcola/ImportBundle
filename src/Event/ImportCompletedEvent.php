@@ -2,8 +2,8 @@
 
 namespace Vinorcola\ImportBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ImportCompletedEvent extends Event
 {
